@@ -80,4 +80,6 @@ export interface CanvasSettingsFormProps {
   onToggleShowGrid: () => void;
   onWidthChange: (width: string) => void;
   onHeightChange: (height: string) => void;
+  newCanvasWidth: string;
+  newCanvasHeight: string;
 }

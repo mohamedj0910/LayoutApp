@@ -17,13 +17,13 @@ export default function DrawingCanvas() {
   const [canvasWidth, setCanvasWidth] = useState(1280);
   const [canvasHeight, setCanvasHeight] = useState(720);
   const [isEditingCanvas, setIsEditingCanvas] = useState(false);
-  const [_newCanvasWidth, setNewCanvasWidth] = useState('1280');
-  const [_newCanvasHeight, setNewCanvasHeight] = useState('720');
+  const [newCanvasWidth, setNewCanvasWidth] = useState('1280');
+  const [newCanvasHeight, setNewCanvasHeight] = useState('720');
   const [canvasBgColor, setCanvasBgColor] = useState('#ffffff');
   const [canvasFgColor, setCanvasFgColor] = useState('#000000');
   const [roundedCorners, setRoundedCorners] = useState(true);
   const [showGrid, setShowGrid] = useState(false);
-  const [_titleEdits, setTitleEdits] = useState<TitleEdits>({});
+  const [titleEdits, setTitleEdits] = useState<TitleEdits>({});
   const [undoHistory, setUndoHistory] = useState<HistoryState[]>([]);
   const [redoHistory, setRedoHistory] = useState<HistoryState[]>([]);
 
@@ -152,12 +152,12 @@ export default function DrawingCanvas() {
         prev.map((p) =>
           p.id === id
             ? {
-                ...p,
-                width: size.width,
-                height: size.height,
-                x: p.x + (['w', 'nw', 'sw'].includes(handle) ? p.width - size.width : 0),
-                y: p.y + (['n', 'nw', 'ne'].includes(handle) ? p.height - size.height : 0),
-              }
+              ...p,
+              width: size.width,
+              height: size.height,
+              x: p.x + (['w', 'nw', 'sw'].includes(handle) ? p.width - size.width : 0),
+              y: p.y + (['n', 'nw', 'ne'].includes(handle) ? p.height - size.height : 0),
+            }
             : p
         )
       );
@@ -202,6 +202,7 @@ export default function DrawingCanvas() {
     [saveState]
   );
 
+
   const handleImportConfig = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       saveState();
@@ -220,9 +221,8 @@ export default function DrawingCanvas() {
 
   return (
     <div
-      className={`min-h-screen ${
-        theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
-      }`}
+      className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'
+        }`}
     >
       <div className="container mx-auto px-4 py-8">
         <Toolbar
@@ -246,21 +246,18 @@ export default function DrawingCanvas() {
         />
         <div className="flex justify-center items-center">
           <div
-            className={`relative border-2 canvas-container transition-colors duration-200 overflow-hidden ${
-              roundedCorners ? 'rounded-xl' : ''
-            } ${showGrid ? 'grid-background' : ''}`}
+            className={`relative border-2 canvas-container transition-colors duration-200 overflow-hidden ${roundedCorners ? 'rounded-xl' : ''
+              } ${showGrid ? 'grid-background' : ''}`}
             style={{
               width: canvasWidth,
               height: canvasHeight,
               backgroundColor: canvasBgColor,
               color: canvasFgColor,
               backgroundImage: showGrid
-                ? `linear-gradient(${
-                    theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
-                  } 1px, transparent 1px),
-                  linear-gradient(90deg, ${
-                    theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
-                  } 1px, transparent 1px)`
+                ? `linear-gradient(${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                } 1px, transparent 1px),
+                  linear-gradient(90deg, ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'
+                } 1px, transparent 1px)`
                 : 'none',
               backgroundSize: showGrid ? '10px 10px' : 'auto',
             }}
@@ -281,7 +278,10 @@ export default function DrawingCanvas() {
               onToggleShowGrid={() => setShowGrid(!showGrid)}
               onWidthChange={setNewCanvasWidth}
               onHeightChange={setNewCanvasHeight}
+              newCanvasWidth={newCanvasWidth}
+              newCanvasHeight={newCanvasHeight}
             />
+
             {panels.map((panel) => (
               <Panel
                 key={panel.id}

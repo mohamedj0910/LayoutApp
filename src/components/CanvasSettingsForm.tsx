@@ -3,8 +3,6 @@ import { useTheme } from '../lib/ThemeContext';
 import { CanvasSettingsFormProps } from '../lib/types';
 
 export const CanvasSettingsForm: React.FC<CanvasSettingsFormProps> = ({
-  canvasWidth,
-  canvasHeight,
   canvasBgColor,
   canvasFgColor,
   roundedCorners,
@@ -18,12 +16,16 @@ export const CanvasSettingsForm: React.FC<CanvasSettingsFormProps> = ({
   onToggleShowGrid,
   onWidthChange,
   onHeightChange,
+  newCanvasWidth,
+  newCanvasHeight,
 }) => {
   const { theme } = useTheme();
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      onSubmit(parseInt(canvasWidth.toString()), parseInt(canvasHeight.toString()));
+      const width = parseInt(newCanvasWidth);
+      const height = parseInt(newCanvasHeight);
+      onSubmit(width, height);
     } else if (e.key === 'Escape') {
       onCancel();
     }
@@ -37,7 +39,7 @@ export const CanvasSettingsForm: React.FC<CanvasSettingsFormProps> = ({
         <div className="flex gap-2 items-center">
           <input
             type="number"
-            value={canvasWidth}
+            value={newCanvasWidth}
             onChange={(e) => onWidthChange(e.target.value)}
             onKeyDown={handleKeyDown}
             className={`w-16 h-8 text-sm font-mono rounded px-2 ${
@@ -58,7 +60,7 @@ export const CanvasSettingsForm: React.FC<CanvasSettingsFormProps> = ({
           </span>
           <input
             type="number"
-            value={canvasHeight}
+            value={newCanvasHeight}
             onChange={(e) => onHeightChange(e.target.value)}
             onKeyDown={handleKeyDown}
             className={`w-16 h-8 text-sm font-mono rounded px-2 ${
