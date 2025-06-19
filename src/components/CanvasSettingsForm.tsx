@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTheme } from '../lib/ThemeContext';
 import { CanvasSettingsFormProps } from '../lib/types';
-
+import ColorPicker from 'react-best-gradient-color-picker'
 export const CanvasSettingsForm: React.FC<CanvasSettingsFormProps> = ({
   canvasBgColor,
   canvasFgColor,
@@ -20,7 +20,6 @@ export const CanvasSettingsForm: React.FC<CanvasSettingsFormProps> = ({
   newCanvasHeight,
 }) => {
   const { theme } = useTheme();
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       const width = parseInt(newCanvasWidth);
@@ -31,70 +30,62 @@ export const CanvasSettingsForm: React.FC<CanvasSettingsFormProps> = ({
     }
   };
 
+  const [toggleColorPanel, setToggleColorPanel] = useState(false)
+
   if (!isEditing) return null;
 
   return (
-    <div className="absolute top-4 right-4 z-30 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-xl border dark:border-gray-700">
-      <div className="space-y-4">
-        <div className="flex gap-2 items-center">
-          <input
-            type="number"
-            value={newCanvasWidth}
-            onChange={(e) => onWidthChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className={`w-16 h-8 text-sm font-mono rounded px-2 ${
-              theme === 'dark'
-                ? 'bg-gray-600 text-white border-gray-500'
-                : 'bg-white text-gray-900 border-gray-300'
-            } border`}
-            min="200"
-            max="1200"
-            aria-label="Canvas Width"
-          />
-          <span
-            className={`text-sm font-mono ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-            }`}
-          >
-            ×
-          </span>
-          <input
-            type="number"
-            value={newCanvasHeight}
-            onChange={(e) => onHeightChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className={`w-16 h-8 text-sm font-mono rounded px-2 ${
-              theme === 'dark'
-                ? 'bg-gray-600 text-white border-gray-500'
-                : 'bg-white text-gray-900 border-gray-300'
-            } border`}
-            min="200"
-            max="1200"
-            aria-label="Canvas Height"
-          />
-        </div>
-        <div className="flex gap-4 items-center">
-          <div className="flex flex-col gap-1">
-            <label
-              className={`text-xs font-mono ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-              }`}
-            >
-              Background
-            </label>
+    <>
+      <div className="absolute left-0 top-[250px] z-30 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-xl border dark:border-gray-700">
+        <div className="space-y-4">
+          <div className="flex gap-2 items-center">
             <input
-              type="color"
-              value={canvasBgColor}
-              onChange={(e) => onBgColorChange(e.target.value)}
-              className="w-8 h-8 rounded cursor-pointer"
-              aria-label="Background Color"
+              type="number"
+              value={newCanvasWidth}
+              onChange={(e) => onWidthChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className={`w-16 h-8 text-sm font-mono rounded px-2 ${theme === 'dark'
+                ? 'bg-gray-600 text-white border-gray-500'
+                : 'bg-white text-gray-900 border-gray-300'
+                } border`}
+              min="200"
+              max="1200"
+              aria-label="Canvas Width"
+            />
+            <span
+              className={`text-sm font-mono ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+                }`}
+            >
+              ×
+            </span>
+            <input
+              type="number"
+              value={newCanvasHeight}
+              onChange={(e) => onHeightChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+              className={`w-16 h-8 text-sm font-mono rounded px-2 ${theme === 'dark'
+                ? 'bg-gray-600 text-white border-gray-500'
+                : 'bg-white text-gray-900 border-gray-300'
+                } border`}
+              min="200"
+              max="1200"
+              aria-label="Canvas Height"
             />
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex gap-4 items-center" onClick={() => setToggleColorPanel(!toggleColorPanel)}>
+            <div className="flex flex-col gap-1">
+              <label
+                className="text-xs font-mono text-gray-300"
+              >
+                Background
+              </label>
+              <div style={{ height: '20px', width: '20px', background: canvasBgColor }}>
+
+              </div>
+            </div>
+            {/* <div className="flex flex-col gap-1">
             <label
-              className={`text-xs font-mono ${
-                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-              }`}
+              className="text-xs font-mono text-gray-300"
             >
               Foreground
             </label>
@@ -105,65 +96,69 @@ export const CanvasSettingsForm: React.FC<CanvasSettingsFormProps> = ({
               className="w-8 h-8 rounded cursor-pointer"
               aria-label="Foreground Color"
             />
+          </div> */}
+          </div>
+          <div className="flex items-center gap-2">
+            <label
+              className="text-xs font-mono text-gray-300"
+            >
+              Rounded Corners
+            </label>
+            <button
+              onClick={onToggleRoundedCorners}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${roundedCorners
+                ? theme === 'dark'
+                  ? 'bg-blue-600'
+                  : 'bg-blue-500'
+                : theme === 'dark'
+                  ? 'bg-gray-600'
+                  : 'bg-gray-300'
+                }`}
+              aria-label={`Toggle Rounded Corners ${roundedCorners ? 'off' : 'on'}`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${roundedCorners ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+              />
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <label
+              className="text-xs font-mono text-gray-300"
+            >
+              Show Grid
+            </label>
+            <button
+              onClick={onToggleShowGrid}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${showGrid
+                ? theme === 'dark'
+                  ? 'bg-blue-600'
+                  : 'bg-blue-500'
+                : theme === 'dark'
+                  ? 'bg-gray-600'
+                  : 'bg-gray-300'
+                }`}
+              aria-label={`Toggle Grid ${showGrid ? 'off' : 'on'}`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${showGrid ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+              />
+            </button>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <label
-            className={`text-xs font-mono ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-            }`}
-          >
-            Rounded Corners
-          </label>
-          <button
-            onClick={onToggleRoundedCorners}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              roundedCorners
-                ? theme === 'dark'
-                  ? 'bg-blue-600'
-                  : 'bg-blue-500'
-                : theme === 'dark'
-                  ? 'bg-gray-600'
-                  : 'bg-gray-300'
-            }`}
-            aria-label={`Toggle Rounded Corners ${roundedCorners ? 'off' : 'on'}`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                roundedCorners ? 'translate-x-6' : 'translate-x-1'
-              }`}
-            />
-          </button>
-        </div>
-        <div className="flex items-center gap-2">
-          <label
-            className={`text-xs font-mono ${
-              theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
-            }`}
-          >
-            Show Grid
-          </label>
-          <button
-            onClick={onToggleShowGrid}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-              showGrid
-                ? theme === 'dark'
-                  ? 'bg-blue-600'
-                  : 'bg-blue-500'
-                : theme === 'dark'
-                  ? 'bg-gray-600'
-                  : 'bg-gray-300'
-            }`}
-            aria-label={`Toggle Grid ${showGrid ? 'off' : 'on'}`}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                showGrid ? 'translate-x-6' : 'translate-x-1'
-              }`}
-            />
-          </button>
-        </div>
       </div>
-    </div>
+      <div className={`absolute rounded-lg bg-gray-800 top-[330px] left-10 z-30 ${toggleColorPanel ? 'p-2' : 'h-0 p-0'} overflow-hidden`}>
+        <ColorPicker
+          value={canvasBgColor}
+          onChange={onBgColorChange}
+          className="rounded"
+          height={170}
+          aria-label="Background Color or Gradient"
+          hidePresets={true}
+          hideAdvancedSliders={true}
+        />
+      </div>
+    </>
   );
 };
