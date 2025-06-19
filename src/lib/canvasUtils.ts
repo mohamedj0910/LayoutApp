@@ -10,8 +10,8 @@ export const addPanel = (
   const canvas = document.querySelector('.canvas-container');
   if (!canvas) return panels;
   const rect = canvas.getBoundingClientRect();
-  const x = rect.x/2+2
-  const y = rect.y+20
+  const x = rect.x / 2 + 2
+  const y = rect.y + 20
   const maxZIndex = panels.length > 0 ? Math.max(...panels.map((p) => p.zIndex)) : 0;
   return [
     ...panels,
@@ -75,10 +75,20 @@ export const pastePanel = (
 };
 
 export const exportToPNG = (canvasBgColor: string): void => {
-  const canvas = document.querySelector('.canvas-container');
+  const canvas = document.querySelector('.react-transform-component');
+  const resizeHandles = document.querySelectorAll('.selected');
+  const lockIcon = document.querySelector('.lock-icon')
+  lockIcon?.classList.add('export-class')
+  
+  
+  if (resizeHandles.length) {
+    for (let handles of resizeHandles) {
+      handles.classList.add('export-class');
+    }
+  }
   if (canvas) {
     html2canvas(canvas as HTMLElement, {
-      backgroundColor: canvasBgColor,
+      // backgroundColor: canvasBgColor,
       scale: 2,
       logging: false,
     }).then((canvasElement: HTMLCanvasElement) => {
@@ -86,6 +96,12 @@ export const exportToPNG = (canvasBgColor: string): void => {
       link.download = 'panel-drawing.png';
       link.href = canvasElement.toDataURL('image/png');
       link.click();
+      lockIcon?.classList.remove('export-class')
+      if (resizeHandles.length) {
+        for (let handles of resizeHandles) {
+          handles.classList.remove('export-class');
+        }
+      }
     });
   }
 };
