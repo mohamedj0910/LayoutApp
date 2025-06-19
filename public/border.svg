@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="64.94 84.872 301.632 10.105" width="301.632px" height="10.105px">
+  <g id="object-0" transform="matrix(1, 0, 0, 1, 0, 7.105427357601002e-15)">
+    <path style="paint-order: stroke; stroke: rgb(59, 130, 246); fill: rgb(59, 130, 246);" d="M 71.132 89.897 L 360.133 89.897"/>
+    <rect x="356.971" y="84.872" width="9.601" height="9.601" style="paint-order: stroke; stroke: rgb(59, 130, 246); fill: rgb(255, 255, 255); stroke-width: 2px;"/>
+    <rect x="65.439" y="85.376" width="9.601" height="9.601" style="stroke-width: 1; paint-order: stroke; stroke: rgb(59, 130, 246); fill: rgb(59, 130, 246);"/>
+    <rect x="64.94" y="85.288" width="9.601" height="9.601" style="paint-order: stroke; stroke: rgb(59, 130, 246); stroke-width: 2px; fill: rgb(255, 255, 255);"/>
+    <rect x="216.586" y="85.21" width="9.601" height="9.601" style="paint-order: fill; stroke: rgb(59, 130, 246); fill: rgb(255, 255, 255);"/>
+  </g>
+</svg>

@@ -1,8 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { DraggableData, DraggableEvent } from 'react-draggable';
 import Draggable from 'react-draggable';
-import { ResizableBox } from 'react-resizable';
-import { Trash2, Move } from 'lucide-react';
+import { ResizableBox, ResizeCallbackData } from 'react-resizable';
+import { Trash2, Lock, Edit2Icon, Unlock } from 'lucide-react';
 import { useTheme } from '../lib/ThemeContext';
 import { PanelProps } from '../lib/types';
 
@@ -13,151 +13,462 @@ export const Panel: React.FC<PanelProps> = ({
   width,
   height,
   zIndex,
+  shapeType,
   title,
-  isCircle,
+  textContent,
+  panelStyles = {},
+  titleStyle = {},
   isSelected,
-  isCtrlPressed,
-  moveMode,
-  roundedCorners,
+  showGrid,
   onDragStop,
   onResize,
   onRemove,
   onSelect,
-  onToggleMoveMode,
+  onTextChange,
   onTitleChange,
+  onPanelStylesChange,
+  onOpenSidebar,
+  onDragStart,
+  onResizeStart,
+  onInteractionEnd,
+  onMouseEnter,
+  onMouseLeave,
 }) => {
   const { theme } = useTheme();
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [newTitle, setNewTitle] = useState(title);
+  const [isEditingText, setIsEditingText] = useState(false);
+  const [newText, setNewText] = useState('');
+  const [isResizing, setIsResizing] = useState(false);
+  const [hasMoved, setHasMoved] = useState(false); // Track if drag moved significantly
+  const [isHovered, setIsHovered] = useState(false);
+  const originalSize = useRef({ width: 0, height: 0 });
+  const isShiftPressed = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const dragStartPos = useRef<{ x: number; y: number } | null>(null); // Store initial mouse position
 
-  const handleDragStop = useCallback(
-    (_e: DraggableEvent, data: DraggableData) => {
-      onDragStop(id, data);
+  useEffect(() => {
+    if (!isSelected) {
+      setIsEditingText(false);
+    }
+  }, [isSelected]);
+
+  useEffect(() => {
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') {
+        if (!isResizing) return;
+        isShiftPressed.current = true;
+      }
+      if (e.key === 'Delete') {
+        onRemove(id)
+      }
+    };
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === 'Shift') isShiftPressed.current = false;
+    };
+
+
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [isResizing, isSelected]);
+
+  const handleDragStart = useCallback(
+    (e: DraggableEvent) => {
+      e.stopPropagation();
+      if ('clientX' in e) {
+        dragStartPos.current = { x: e.clientX, y: e.clientY };
+      }
+      onDragStart();
+      onSelect(id);
     },
-    [id, onDragStop]
+    [id, onDragStart, onSelect]
   );
 
-  const handleTitleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      onTitleChange(id, newTitle);
-      setIsEditingTitle(false);
+  const handleLockToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onPanelStylesChange(id, { locked: !panelStyles?.locked });
+  };
+
+  const handleDragStop = useCallback(
+    (e: DraggableEvent, data: DraggableData) => {
+      if (('clientX' in e && dragStartPos.current)) {
+        console.log(e)
+        const dx = Math.abs(e.clientX - dragStartPos.current.x);
+        const dy = Math.abs(e.clientY - dragStartPos.current.y);
+        if (dx > 1 || dy > 1) {
+          setHasMoved(true);
+        }
+      }
+      dragStartPos.current = null; // Reset position
+      onDragStop(id, data);
+      onInteractionEnd();
     },
-    [id, newTitle, onTitleChange]
+    [id, onDragStop, onInteractionEnd]
+  );
+
+  const handleResizeStart = useCallback(
+    (e: React.SyntheticEvent, _data: ResizeCallbackData) => {
+      e.stopPropagation();
+      originalSize.current = { width, height };
+      setIsResizing(true);
+      onResizeStart();
+    },
+    [width, height, onResizeStart]
   );
 
   const handleResize = useCallback(
     (_e: React.SyntheticEvent, { size, handle }: { size: { width: number; height: number }; handle: string }) => {
-      const newSize = isCircle ? { width: Math.max(size.width, size.height), height: Math.max(size.width, size.height) } : size;
+      let newSize = { ...size };
+      if (isShiftPressed.current && shapeType !== 'line' && shapeType !== 'text') {
+        const aspectRatio = originalSize.current.width / originalSize.current.height;
+        if (['e', 'w', 'ne', 'nw', 'se', 'sw'].includes(handle)) {
+          newSize.height = newSize.width / aspectRatio;
+        } else if (['n', 's'].includes(handle)) {
+          newSize.width = newSize.height * aspectRatio;
+        }
+      }
+      newSize.width = Math.max(newSize.width, shapeType === 'text' ? 100 : 100);
+      newSize.height = Math.max(newSize.height, shapeType === 'text' ? 50 : 100);
       onResize(id, newSize, handle);
     },
-    [id, isCircle, onResize]
+    [id, onResize, shapeType]
   );
+
+  const handleResizeStop = useCallback(
+    (e: React.SyntheticEvent, _data: ResizeCallbackData) => {
+      e.stopPropagation();
+      setIsResizing(false);
+      onInteractionEnd();
+    },
+    [onInteractionEnd]
+  );
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onSelect(id);
+    },
+    [id, onSelect]
+  );
+
+  const handleDoubleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      setIsEditingText(true);
+    },
+    []
+  );
+
+  const handleTextBlur = useCallback(() => {
+    if (shapeType === 'text') {
+      onTextChange(id, newText);
+    } else {
+      onTitleChange(id, newText);
+    }
+    setIsEditingText(false);
+  }, [id, newText, onTextChange, onTitleChange, shapeType]);
+
+  const getShapePath = (shape: string, w: number, h: number) => {
+    const padding = 5;
+    const adjW = w - padding * 2;
+    const adjH = h - padding * 2;
+    switch (shape) {
+      case 'rectangle':
+        return `M${padding},${padding} h${adjW} v${adjH} h${-adjW} z`;
+      case 'circle':
+        return `M${w / 2},${padding} a${adjW / 2},${adjH / 2} 0 1,0 0,${adjH} a${adjW / 2},${adjH / 2} 0 1,0 0,${-adjH} z`;
+      case 'triangle':
+        return `M${padding},${h - padding} L${w / 2},${padding} L${w - padding},${h - padding} z`;
+      case 'star':
+        const starPoints = [
+          [w / 2, padding],
+          [w * 0.6, h * 0.3],
+          [w - padding, h * 0.4],
+          [w * 0.7, h * 0.6],
+          [w * 0.8, h - padding],
+          [w / 2, h * 0.7],
+          [w * 0.2, h - padding],
+          [w * 0.3, h * 0.6],
+          [padding, h * 0.4],
+          [w * 0.4, h * 0.3],
+        ];
+        return `M${starPoints[0][0]},${starPoints[0][1]} ${starPoints
+          .slice(1)
+          .map((p) => `L${p[0]},${p[1]}`)
+          .join(' ')} z`;
+      case 'diamond':
+        return `M${w / 2},${padding} L${w - padding},${h / 2} L${w / 2},${h - padding} L${padding},${h / 2} z`;
+      case 'line':
+        return `M${padding},${h / 2} h${adjW}`;
+      default:
+        return '';
+    }
+  };
+
+  const getStrokeDasharray = () => {
+    switch (panelStyles.borderStyle) {
+      case 'dashed':
+        return `${Number(panelStyles.borderWidth) * 2},${Number(panelStyles.borderWidth) * 2}`;
+      case 'dotted':
+        return `${Number(panelStyles.borderWidth) / 5},${Number(panelStyles.borderWidth) * 2}`;
+      default:
+        return 'none';
+    }
+  };
+
+  const rotationDegrees = panelStyles.rotate || 0;
+  const viewBoxPadding = 0;
+  const viewBox = `-${viewBoxPadding} -${viewBoxPadding} ${width + viewBoxPadding * 2} ${height + viewBoxPadding * 2}`;
 
   return (
     <Draggable
       position={{ x, y }}
+      onStart={handleDragStart}
       onStop={handleDragStop}
-      bounds="parent"
-      grid={[10, 10]}
-      disabled={!isCtrlPressed && !moveMode}
+      grid={showGrid ? [50, 50] : [1, 1]}
+      disabled={isResizing || isEditingText || panelStyles.locked}
     >
       <div
-        className={`absolute ${isSelected ? 'z-10' : 'z-0'}`}
-        style={{ zIndex }}
-        onClick={() => onSelect(id)}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (!hasMoved) {
+            onOpenSidebar(id);
+          }
+          setHasMoved(false);
+        }}
+        ref={containerRef}
+        style={{
+          zIndex,
+          opacity: panelStyles.opacity ?? 1,
+          transform: `rotate(${rotationDegrees}deg)`,
+          transformOrigin: 'center center',
+        }}
+        className={`absolute ${isSelected ? 'selected-panel' : ''}`}
+        onMouseDown={handleMouseDown}
+        onDoubleClick={handleDoubleClick}
+        onMouseEnter={() => {
+          setIsHovered(true)
+          onMouseEnter(id)
+        }
+        }
+        onMouseLeave={() => {
+          setIsHovered(false)
+          onMouseLeave(id)
+        }}
       >
         <ResizableBox
+          draggableOpts={
+            {
+              disabled: panelStyles.locked,
+              grid: showGrid ? [50, 50] : [1, 1]
+            }
+          }
           width={width}
           height={height}
+
           resizeHandles={['s', 'e', 'n', 'w', 'ne', 'nw', 'se', 'sw']}
-          minConstraints={[200, 200]}
-          draggableOpts={{ grid: [10, 10] }}
-          onResizeStart={() => moveMode && onToggleMoveMode()}
+          minConstraints={shapeType === 'text' ? [100, 50] : [100, 100]}
+          onResizeStart={handleResizeStart}
           onResize={handleResize}
+          onResizeStop={handleResizeStop}
+          lockAspectRatio={isShiftPressed.current}
+          className={`resizable-container`}
+          style={{
+            position: 'relative',
+            transform: `rotate(${rotationDegrees}deg)`,
+            transformOrigin: 'center center',
+          }}
         >
-          <div className="relative group">
-            <div className="handle-icon absolute bottom-0 right-0">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M21 15L15 21M21 8L8 21"
-                  stroke="rgb(209 213 219)"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <div
-              className={`${isCircle ? 'rounded-full' : roundedCorners ? 'rounded-lg' : ''} ${
-                isSelected || moveMode
-                  ? 'z-10 border-2 border-indigo-700'
-                  : 'z-0 border-2 group-hover:border-blue-400'
-              } ${
-                theme === 'dark'
-                  ? 'bg-gray-700 shadow-xl shadow-gray-900/70 border-gray-500'
-                  : 'bg-white shadow-xl shadow-gray-300/70 border-gray-300'
-              } transition-colors duration-200`}
-              style={{ width, height }}
+          <div className={`${isSelected ? 'top selected' : ''}`}></div>
+          <div className={`${isSelected ? 'right selected' : ''}`}></div>
+          <div className={`${isSelected ? 'left selected' : ''}`}></div>
+          <div className={`${isSelected ? 'bottom selected' : ''}`}></div>
+          <div className="panel-content">
+            <svg
+              width="100%"
+              height="100%"
+              viewBox={viewBox}
+              preserveAspectRatio="none"
+              style={{
+                overflow: 'visible',
+              }}
             >
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onRemove(id);
-                  }}
-                  className={`p-1.5 rounded-md ${
-                    theme === 'dark' ? 'bg-red-600 hover:bg-red-700' : 'bg-red-500 hover:bg-red-600'
-                  } text-white shadow-lg`}
-                >
-                  <Trash2 size={14} />
-                </button>
-              </div>
-              <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleMoveMode();
-                  }}
-                  className={`p-1.5 rounded-md ${
-                    moveMode || isCtrlPressed
-                      ? theme === 'dark'
-                        ? 'bg-blue-600'
-                        : 'bg-blue-500'
-                      : theme === 'dark'
-                        ? 'bg-gray-600'
-                        : 'bg-gray-300'
-                  } text-white shadow-lg cursor-move transition-colors`}
-                >
-                  <Move size={14} />
-                </button>
-              </div>
-              <div className={`${theme === 'dark' ? 'text-white' : 'text-gray-800'} select-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}>
-                {isEditingTitle ? (
-                  <form onSubmit={handleTitleSubmit}>
-                    <input
-                      type="text"
-                      value={newTitle}
-                      onChange={(e) => setNewTitle(e.target.value)}
-                      onBlur={() => {
-                        onTitleChange(id, newTitle);
-                        setIsEditingTitle(false);
+
+              {shapeType === 'text' ? (
+                <foreignObject x="10" y="10" width={width - 20} height={height - 20}>
+                  {isEditingText ? (
+                    <textarea
+                      value={newText}
+                      onChange={(e) => setNewText(e.target.value)}
+                      onBlur={handleTextBlur}
+                      onClick={(e) => e.stopPropagation()}
+                      onDoubleClick={(e) => e.stopPropagation()}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          handleTextBlur();
+                        }
                       }}
-                      className={`text-center px-2 py-1 border rounded text-sm w-full ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        fontSize: `${titleStyle.fontSize || Math.min(Math.max(width / 10, 12), 24)}px`,
+                        fontWeight: titleStyle.fontStyle === 'bold' ? 'bold' : 'normal',
+                        fontStyle: titleStyle.fontStyle === 'italic' ? 'italic' : 'normal',
+                        textAlign: titleStyle.textAlign || 'left',
+                        textTransform: titleStyle.textTransform || 'none',
+                        padding: '4px',
+                        background: panelStyles.backgroundColor ?? (theme === 'dark' ? '#4B5563' : '#FFFFFF'),
+                        color: titleStyle.textColor || (theme === 'dark' ? '#FFFFFF' : '#000000'),
+                        opacity: titleStyle.opacity ?? 1,
+                        border: 'none',
+                        outline: 'none',
+                        resize: 'none',
+                        lineHeight: '1.2',
+                      }}
                       autoFocus
+                      className="text-edit-area"
                     />
-                  </form>
+                  ) : (
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        fontSize: `${titleStyle.fontSize || Math.min(Math.max(width / 10, 12), 24)}px`,
+                        fontStyle: titleStyle.fontStyle || 'normal',
+                        textAlign: titleStyle.textAlign || 'left',
+                        textTransform: titleStyle.textTransform || 'none',
+                        padding: '4px',
+                        color: titleStyle.textColor || (theme === 'dark' ? '#FFFFFF' : '#000000'),
+                        opacity: titleStyle.opacity ?? 1,
+                        whiteSpace: 'pre-wrap',
+                        overflow: 'hidden',
+                        lineHeight: '1.2',
+                      }}
+                    >
+                      {textContent}
+                    </div>
+                  )}
+                </foreignObject>
+              ) : (
+                <path
+                  className='outline-2 outline-offset-4 outline-red-700'
+                  d={getShapePath(shapeType, width, height)}
+                  fill={
+                    panelStyles.backgroundColor === null
+                      ? 'none'
+                      : panelStyles.backgroundColor || (theme === 'dark' ? '#4B5563' : '#FFFFFF')
+                  }
+                  stroke={
+                    panelStyles.borderColor === null
+                      ? 'none'
+                      : panelStyles.borderColor || (theme === 'dark' ? '#9CA3AF' : '#D1D5DB')
+                  }
+                  stroke-linecap={panelStyles.borderStyle == "dotted" ? 'round' : 'box'}
+                  strokeWidth={panelStyles.borderWidth || 0}
+                  strokeDasharray={getStrokeDasharray()}
+                />
+              )}
+            </svg>
+
+            {shapeType !== 'text' && (
+              <div className="panel-title">
+                {isEditingText ? (
+                  <textarea
+                    value={newText}
+                    onChange={(e) => setNewText(e.target.value)}
+                    onBlur={handleTextBlur}
+                    onClick={(e) => e.stopPropagation()}
+                    onDoubleClick={(e) => e.stopPropagation()}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleTextBlur();
+                      }
+                    }}
+                    style={{
+                      width: '100%',
+                      fontSize: `${titleStyle.fontSize || 14}px`,
+                      fontWeight: titleStyle.fontStyle === 'bold' ? 'bold' : 'normal',
+                      fontStyle: titleStyle.fontStyle === 'italic' ? 'italic' : 'normal',
+                      textAlign: titleStyle.textAlign || 'center',
+                      textTransform: titleStyle.textTransform || 'none',
+                      color: titleStyle.textColor || (theme === 'dark' ? '#FFFFFF' : '#000000'),
+                      opacity: titleStyle.opacity ?? 1,
+                      padding: '0 30px',
+                      background: 'transparent',
+                      border: 'none',
+                      outline: 'none',
+                      resize: 'none',
+                      lineHeight: '1.2',
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                    }}
+                    autoFocus
+                    className="text-edit-area"
+                  />
                 ) : (
-                  <div
-                    className="text-center text-xs mt-2 cursor-text"
-                    onClick={() => setIsEditingTitle(true)}
+                  <span
+                    style={{
+                      width: '100%',
+                      padding: '0 30px',
+                      display: 'block',
+                      fontSize: `${titleStyle.fontSize || 14}px`,
+                      fontWeight: titleStyle.fontStyle === 'bold' ? 'bold' : 'normal',
+                      fontStyle: titleStyle.fontStyle === 'italic' ? 'italic' : 'normal',
+                      textAlign: titleStyle.textAlign || 'center',
+                      textTransform: titleStyle.textTransform || 'none',
+                      color: titleStyle.textColor || (theme === 'dark' ? '#FFFFFF' : '#000000'),
+                      opacity: titleStyle.opacity ?? 1,
+                    }}
                   >
                     {title}
-                  </div>
+                  </span>
                 )}
               </div>
-            </div>
+            )}
           </div>
+
+          <div className="panel-controls">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove(id);
+              }}
+              className={`delete-button ${theme === 'dark' ? 'dark' : 'light'}`}
+            >
+              <Trash2 size={14} />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenSidebar(id);
+              }}
+              className={`move-button ${isSelected ? 'active' : ''} ${theme === 'dark' ? 'dark' : 'light'}`}
+            >
+              <Edit2Icon size={14} />
+            </button>
+          </div>
+
+          {(isSelected || isHovered) &&
+            <button
+              onClick={handleLockToggle}
+              className={`absolute top-[15px] right-[15px] bg-${panelStyles.locked ? 'blue-500' : 'gray-300'} p-[4px] rounded-sm ${isSelected ? 'lock-icon' : ''}`}
+              aria-label={panelStyles.locked ? 'Unlock Panel' : 'Lock Panel'}
+              style={{ zIndex: 10 }}
+            >
+              {panelStyles.locked ? <Lock className='' size={14} /> : <Unlock size={14} />}
+            </button>
+          }
         </ResizableBox>
       </div>
     </Draggable>

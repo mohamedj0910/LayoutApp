@@ -2,12 +2,484 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  cursor: url('/cursor.svg'), auto;
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  scrollbar-width: none;
 }
 
-button,label {
+/* body {
+  cursor: url('/cursor.svg'), auto;
+} */
+
+button,
+label {
   cursor: unset;
+}
+
+.react-resizable {
+  position: relative;
+}
+
+.react-resizable-handle {
+  position: absolute;
+  bottom: 0;
+  height: 4%;
+  width: 4%;
+  z-index: 9999;
+  background-color: transparent;
+  cursor: se-resize;
+}
+
+.react-resizable-handle-w,
+.react-resizable-handle-e {
+  top: 4%;
+  cursor: ew-resize;
+  height: 96%;
+  transform: rotate(0deg);
+  width: 4%;
+}
+
+.react-resizable-handle-n,
+.react-resizable-handle-s {
+  cursor: ns-resize;
+  width: 96%;
+  transform: rotate(0deg);
+  height: 4%;
+}
+
+.react-resizable-handle-w {
+  left: 0;
+}
+
+.react-resizable-handle-e {
+  right: 0;
+}
+
+.react-resizable-handle-n {
+  top: 0;
+  left: 4%;
+}
+
+.react-resizable-handle-s {
+  bottom: 0;
+  left: 4%;
+}
+
+.react-resizable-handle-se {
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+}
+
+.react-resizable-handle-ne {
+  top: 0;
+  right: 0;
+  cursor: ne-resize;
+}
+
+.react-resizable-handle-nw {
+  top: 0;
+  left: 0;
+  cursor: nw-resize;
+}
+
+.react-resizable-handle-sw {
+  bottom: 0;
+  left: 0;
+  cursor: sw-resize;
+}
+
+.grid-background {
+  /* background-color: transparent; */
+  background-image:
+    radial-gradient(circle at 3% 3%, black 1px, transparent 1px),
+    radial-gradient(circle at 3% 20%, black 1px, transparent 1px),
+    radial-gradient(circle at 3% 40%, black 1px, transparent 1px),
+    radial-gradient(circle at 3% 60%, black 1px, transparent 1px),
+    radial-gradient(circle at 3% 80%, black 1px, transparent 1px),
+    radial-gradient(circle at 20% 8%, black 1px, transparent 1px),
+    radial-gradient(circle at 40% 8%, black 1px, transparent 1px),
+    radial-gradient(circle at 60% 8%, black 1px, transparent 1px),
+    radial-gradient(circle at 80% 8%, black 1px, transparent 1px);
+  background-repeat: repeat;
+  background-size: 50px 50px;
+}
+
+.selecto-selection {
+  border: 2px dashed #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+
+/* Add these to your existing index.css */
+/* .react-resizable {
+  position: relative;
+  transform-origin: center center;
+} */
+
+/* .react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  transform-origin: center center;
+} */
+
+/* .react-resizable-handle-se {
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2IDYiIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiNmZmZmZmYwMCIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iNnB4Ij48ZyBvcGFjaXR5PSIwLjMwMiI+PHBhdGggZD0iTSA2IDYgTCAwIDYgTCAwIDQuMiBMIDQgNC4yIEwgNC4yIDQuMiBMIDQuMiAwIEwgNiAwIEwgNiA2IEwgNiA2IFoiIGZpbGw9IiMwMDAwMDAiLz48L2c+PC9zdmc+");
+  background-position: bottom right;
+  padding: 0 3px 3px 0;
+} */
+
+/* .react-resizable-handle-sw {
+  bottom: 0;
+  left: 0;
+  cursor: sw-resize;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2IDYiIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiNmZmZmZmYwMCIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iNnB4Ij48ZyBvcGFjaXR5PSIwLjMwMiI+PHBhdGggZD0iTSA2IDYgTCAwIDYgTCAwIDQuMiBMIDQgNC4yIEwgNC4yIDQuMiBMIDQuMiAwIEwgNiAwIEwgNiA2IEwgNiA2IFoiIGZpbGw9IiMwMDAwMDAiLz48L2c+PC9zdmc+");
+  background-position: bottom left;
+  padding: 0 0 3px 3px;
+} */
+
+/* .react-resizable-handle-nw {
+  top: 0;
+  left: 0;
+  cursor: nw-resize;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2IDYiIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiNmZmZmZmYwMCIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iNnB4Ij48ZyBvcGFjaXR5PSIwLjMwMiI+PHBhdGggZD0iTSA2IDYgTCAwIDYgTCAwIDQuMiBMIDQgNC4yIEwgNC4yIDQuMiBMIDQuMiAwIEwgNiAwIEwgNiA2IEwgNiA2IFoiIGZpbGw9IiMwMDAwMDAiLz48L2c+PC9zdmc+");
+  background-position: top left;
+  padding: 3px 0 0 3px;
+}
+
+.react-resizable-handle-ne {
+  top: 0;
+  right: 0;
+  cursor: ne-resize;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2IDYiIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiNmZmZmZmYwMCIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iNnB4Ij48ZyBvcGFjaXR5PSIwLjMwMiI+PHBhdGggZD0iTSA2IDYgTCAwIDYgTCAwIDQuMiBMIDQgNC4yIEwgNC4yIDQuMiBMIDQuMiAwIEwgNiAwIEwgNiA2IEwgNiA6IFoiIGZpbGw9IiMwMDAwMDAiLz48L2c+PC9zdmc+");
+  background-position: top right;
+  padding: 3px 3px 0 0;
+} */
+
+/* .react-resizable-handle-w,
+.react-resizable-handle-e {
+  top: 50%;
+  margin-top: -10px;
+  cursor: ew-resize;
+  width: 10px;
+  height: 20px;
+}
+
+.react-resizable-handle-w {
+  left: 0;
+  cursor: w-resize;
+}
+
+.react-resizable-handle-e {
+  right: 0;
+  cursor: e-resize;
+}
+
+.react-resizable-handle-n,
+.react-resizable-handle-s {
+  left: 50%;
+  margin-left: -10px;
+  cursor: ns-resize;
+  width: 20px;
+  height: 10px;
+}
+
+.react-resizable-handle-n {
+  top: 0;
+  cursor: n-resize;
+}
+
+.react-resizable-handle-s {
+  bottom: 0;
+  cursor: s-resize;
+} */
+
+.text-edit-area {
+  font-family: inherit;
+  outline: none;
+}
+
+/* .react-resizable-rotated {
+  position: relative;
+  transform-origin: center center !important;
+} */
+
+/* .react-resizable-rotated > .react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  transform: rotate(var(--rotation, 0deg));
+  transform-origin: center center;
+  background-repeat: no-repeat;
+  background-position: center;
+  box-sizing: border-box;
+} */
+
+/* .react-resizable-rotated > .react-resizable-handle::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid rgba(0, 0, 0, 0.4);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.4);
+} */
+
+/* Handle positions with rotation adjustments */
+.react-resizable-rotated>.react-resizable-handle-se {
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+  --rotation: -45deg;
+}
+
+.react-resizable-rotated>.react-resizable-handle-sw {
+  bottom: 0;
+  left: 0;
+  cursor: sw-resize;
+  --rotation: 45deg;
+}
+
+.react-resizable-rotated>.react-resizable-handle-nw {
+  top: 0;
+  left: 0;
+  cursor: nw-resize;
+  --rotation: -135deg;
+}
+
+.react-resizable-rotated>.react-resizable-handle-ne {
+  top: 0;
+  right: 0;
+  cursor: ne-resize;
+  --rotation: 135deg;
+}
+
+.react-resizable-rotated>.react-resizable-handle-w {
+  left: 0;
+  top: 50%;
+  margin-top: -10px;
+  cursor: w-resize;
+  --rotation: 90deg;
+}
+
+.react-resizable-rotated>.react-resizable-handle-e {
+  right: 0;
+  top: 50%;
+  margin-top: -10px;
+  cursor: e-resize;
+  --rotation: -90deg;
+}
+
+.react-resizable-rotated>.react-resizable-handle-n {
+  top: 0;
+  left: 50%;
+  margin-left: -10px;
+  cursor: n-resize;
+  --rotation: 180deg;
+}
+
+.react-resizable-rotated>.react-resizable-handle-s {
+  bottom: 0;
+  /* left: 50%; */
+  margin-left: -10px;
+  cursor: s-resize;
+}
+
+/* Add to your index.css */
+/* .selected-panel {
+  outline: 2px solid #3b82f6;
+} */
+
+.resizable-container {
+  position: relative;
+  transform-origin: center center;
+}
+
+.resizable-container.selected .react-resizable-handle {
+  z-index: 1001 !important;
+}
+
+.panel-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.panel-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  pointer-events: none;
+}
+
+.panel-controls {
+  position: absolute;
+  top: 15px;
+  right: 40px;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 10;
+}
+
+.resizable-container:hover .panel-controls {
+  opacity: 1;
+}
+
+.delete-button {
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-button.light {
+  background-color: #ef4444;
+  color: white;
+}
+
+.delete-button.dark {
+  background-color: #b91c1c;
+  color: white;
+}
+
+.move-button {
+  padding: 4px;
+  border-radius: 4px;
+  cursor: move;
+}
+
+.move-button.light {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
+.move-button.dark {
+  background-color: #4b5563;
+  color: #e5e7eb;
+}
+
+.move-button.active.light {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.move-button.active.dark {
+  background-color: #1d4ed8;
+  color: white;
+}
+
+/* Resize handle styling */
+.react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: 1000;
+}
+
+/* .react-resizable-handle::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid rgba(0, 0, 0, 0.4);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.4);
+} */
+
+.react-resizable-handle-se {
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+}
+
+.react-resizable-handle-sw {
+  bottom: 0;
+  left: 0;
+  cursor: sw-resize;
+}
+
+.react-resizable-handle-nw {
+  top: 0;
+  left: 0;
+  cursor: nw-resize;
+}
+
+.react-resizable-handle-ne {
+  top: 0;
+  right: 0;
+  cursor: ne-resize;
+}
+
+.react-resizable-handle-w {
+  left: 0;
+  top: 50%;
+  margin-top: -10px;
+  cursor: w-resize;
+}
+
+.react-resizable-handle-e {
+  right: 0;
+  top: 50%;
+  margin-top: -10px;
+  cursor: e-resize;
+}
+
+.react-resizable-handle-n {
+  top: 0;
+  left: 50%;
+  margin-left: -10px;
+  cursor: n-resize;
+}
+
+.react-resizable-handle-s {
+  bottom: 0;
+  left: 50%;
+  margin-left: -10px;
+  cursor: s-resize;
+}
+
+/* Selected panel container */
+.selected-panel {
+  z-index: 1000 !important;
+  /* Base z-index for selected panel */
+  /* outline: 2px solid #3b82f6; */
+}
+
+/* Resize handles - always on top of their panel */
+.resizable-container.selected .react-resizable-handle {
+  z-index: 1001;
+  /* Handles above selected panel */
+}
+
+/* Regular panel content */
+.panel-content {
+  position: relative;
+  z-index: 1;
+  /* Normal content below handles */
+}
+
+/* Panel controls (buttons) */
+.panel-controls {
+  z-index: 10;
+  /* Above content but below handles */
+}
+
+/* Non-selected panels */
+.resizable-container:not(.selected) {
+  z-index: auto;
+  /* Inherit from parent */
 }
 
 .react-resizable {
@@ -56,7 +528,7 @@ button,label {
 
 .react-resizable-handle-s {
   bottom: 0;
-  right: 4%;
+  left: 4%;
 }
 
 .react-resizable-handle-se {
@@ -81,4 +553,150 @@ button,label {
   bottom: 0;
   left: 0;
   cursor: sw-resize;
+}
+
+.top,
+.left,
+.right,
+.bottom {
+  position: absolute;
+  background-color: #3b82f6;
+  display: none;
+
+}
+
+.top {
+  display: block;
+  height: 2px;
+  width: 100%;
+}
+
+.top::after {
+  content: "";
+  position: absolute;
+  height: 8px;
+  width: 8px;
+  left: 50%;
+  transform: translateY(-50%);
+  top: 50%;
+  background-color: #ffffff;
+  border: solid 1px #1d4ed8;
+  border-radius: 50%;
+}
+
+.left {
+  height: 100%;
+  width: 2px;
+}
+
+.left::after {
+  content: "";
+  position: absolute;
+  height: 8px;
+  width: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 50%;
+  background-color: #ffffff;
+  border: solid 1px #1d4ed8;
+  border-radius: 50%;
+}
+
+.bottom {
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+}
+
+.bottom::after {
+  content: "";
+  position: absolute;
+  height: 8px;
+  width: 8px;
+  left: 50%;
+  transform: translateY(-50%);
+  top: 50%;
+  background-color: #ffffff;
+  border: solid 1px #1d4ed8;
+  border-radius: 50%;
+}
+
+.right {
+  right: 0;
+  height: 100%;
+  width: 2px;
+}
+
+.right::after {
+  content: "";
+  position: absolute;
+  height: 8px;
+  width: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 50%;
+  background-color: #ffffff;
+  border: solid 1px #1d4ed8;
+  border-radius: 50%;
+}
+
+.top::before {
+  content: "";
+  height: 8px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  width: 8px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  border: 1px solid #1d4ed8;
+}
+
+.right::before {
+  content: "";
+  height: 8px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  width: 8px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  border: 1px solid #1d4ed8;
+}
+
+.bottom::before {
+  content: "";
+  position: absolute;
+  z-index: 1000;
+  width: 8px;
+  height: 8px;
+  bottom: 0;
+  right: 0;
+  transform: translate(50%, 50%);
+  background-color: #ffffff;
+  border-radius: 50%;
+  border: 1px solid #1d4ed8;
+}
+
+.left::before {
+  content: "";
+  position: absolute;
+  height: 8px;
+  width: 8px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  border: 1px solid #1d4ed8;
+  bottom: 0;
+  z-index: 1000;
+  transform: translate(-50%, 50%);
+}
+
+.selected {
+  z-index: 1001 !important;
+  display: block;
+}
+
+.locked {
+  z-index: 100;
+  background-color: #1d4ed8;
 }

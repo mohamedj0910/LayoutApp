@@ -1,5 +1,4 @@
 import { DraggableData } from 'react-draggable';
-import { ResizableBoxProps } from 'react-resizable';
 
 export type Theme = 'light' | 'dark';
 
@@ -8,15 +7,14 @@ export interface ThemeContextType {
   toggleTheme: () => void;
 }
 
-export interface Panel {
-  id: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  zIndex: number;
-  title: string;
-  isCircle: boolean;
+export interface PanelStyles {
+  backgroundColor?: string | null;
+  borderColor?: string | null;
+  borderWidth?: number;
+  borderStyle?: 'solid' | 'dashed' | 'dotted';
+  rotate?: number;
+  opacity?: number;
+  locked?: boolean;
 }
 
 export interface CanvasConfig {
@@ -29,34 +27,72 @@ export interface CanvasConfig {
   showGrid: boolean;
 }
 
-export type TitleEdits = Record<string, string>;
-
 export type HistoryState = CanvasConfig;
 
-export interface PanelProps extends Pick<ResizableBoxProps, 'resizeHandles' | 'minConstraints'> {
+export interface Panel {
   id: string;
   x: number;
   y: number;
   width: number;
   height: number;
   zIndex: number;
+  shapeType: 'rectangle' | 'circle' | 'triangle' | 'star' | 'diamond' | 'line' | 'text';
   title: string;
-  isCircle: boolean;
+  textContent?: string;
+  panelStyles?: PanelStyles;
+  titleStyle?: TitleStyle;
+}
+
+export interface TitleStyle {
+  textColor?: string;
+  fontSize?: number;
+  fontStyle?: 'normal' | 'bold' | 'italic';
+  textAlign?: 'left' | 'center' | 'right';
+  textTransform?: 'uppercase' | 'lowercase' | 'capitalize' | 'none';
+  opacity?: number;
+}
+
+export interface PanelProps {
+  id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  zIndex: number;
+  shapeType: 'rectangle' | 'circle' | 'triangle' | 'star' | 'diamond' | 'line' | 'text';
+  title: string;
+  textContent?: string;
+  panelStyles?: PanelStyles;
+  titleStyle?: TitleStyle;
   isSelected: boolean;
-  isCtrlPressed: boolean;
-  moveMode: boolean;
   roundedCorners: boolean;
+  showGrid:boolean
   onDragStop: (id: string, data: DraggableData) => void;
   onResize: (id: string, size: { width: number; height: number }, handle: string) => void;
   onRemove: (id: string) => void;
   onSelect: (id: string) => void;
-  onToggleMoveMode: () => void;
+  onTextChange: (id: string, text: string) => void;
   onTitleChange: (id: string, title: string) => void;
+  onPanelStylesChange: (id: string, styles: PanelStyles) => void;
+  onTitleStyleChange: (id: string, styles: TitleStyle) => void;
+  onOpenSidebar: (id: string) => void;
+  onDragStart: () => void;
+  onResizeStart: () => void;
+  onInteractionEnd: () => void;
+  onMouseEnter: (id: string) => void;
+  onMouseLeave: (id: string) => void;
+  onTextEditStart: (id: string) => void;
+  isSidebarOpen?: boolean;
 }
 
 export interface ToolbarProps {
-  onAddSquare: () => void;
+  onAddRectangle: () => void;
   onAddCircle: () => void;
+  onAddTriangle: () => void;
+  onAddStar: () => void;
+  onAddDiamond: () => void;
+  onAddLine: () => void;
+  onAddText: () => void;
   onClearPanels: () => void;
   onToggleCanvasSettings: () => void;
   onExportToPNG: () => void;
@@ -82,4 +118,16 @@ export interface CanvasSettingsFormProps {
   onHeightChange: (height: string) => void;
   newCanvasWidth: string;
   newCanvasHeight: string;
+}
+
+export interface RightSidebarProps {
+  panel: Panel | null;
+  panels: Panel[];
+  isOpen: boolean;
+  onClose: () => void;
+  onPanelStylesChange: (id: string, styles: PanelStyles) => void;
+  onTitleStyleChange: (id: string, styles: TitleStyle) => void;
+  onZIndexChange: (id: string, action: 'back' | 'forward' | 'toBack' | 'toFront') => void;
+  onTitleChange: (id: string, title: string) => void;
+  onPanelDimensionsChange: (id: string, dimensions: { width?: number; height?: number; x?: number; y?: number }) => void;
 }
