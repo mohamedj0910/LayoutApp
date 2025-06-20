@@ -90,7 +90,6 @@ export default function DrawingCanvas() {
     setIsSidebarOpen(false);
     setSidebarPanelId(null);
   }, [redoHistory, panels, canvasWidth, canvasHeight, canvasBgColor, canvasFgColor, roundedCorners, showGrid]);
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey) {
@@ -123,7 +122,7 @@ export default function DrawingCanvas() {
       }
     };
     const escPressed = (e: KeyboardEvent) => {
-      if (e.key == 'Escape') {
+      if (e.key == 'Escape' || e.key=='Enter' || e.key=='Return') {
         if (isEditingCanvas) {
           setIsEditingCanvas(false)
         }
@@ -153,7 +152,7 @@ export default function DrawingCanvas() {
     },
     [saveState]
   );
-
+ 
   console.log(transformRef.current)
 
   const handleRemovePanel = useCallback(
@@ -325,7 +324,6 @@ export default function DrawingCanvas() {
         setCanvasWidth(width);
         setCanvasHeight(height);
       }
-      setIsEditingCanvas(false);
     },
     [saveState]
   );
@@ -437,12 +435,12 @@ export default function DrawingCanvas() {
         onMouseEnter={() => setMouseOnCanvas(true)}
         onMouseLeave={() => setMouseOnCanvas(false)}
       >
-        <div className="zoom-panel flex justify-center items-center">
+        <div className="flex justify-center items-center">
           <TransformWrapper
             initialScale={0.8}
             minScale={0.4}
             maxScale={4}
-            limitToBounds={true}
+            // limitToBounds={true}
             centerZoomedOut={true}
             wheel={{ step: 0.1 }}
             pinch={{ step: 0.1 }}
@@ -451,12 +449,12 @@ export default function DrawingCanvas() {
           >
             <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>
               <div
-                className={`relative border-2 border-black canvas-container transition-colors duration-200 overflow-hidden ${roundedCorners ? 'rounded-xl' : ''}`}
+                className={`canvas-container relative border-2 border-black transition-colors duration-200 overflow-hidden ${roundedCorners ? 'rounded-xl' : ''}`}
                 style={{
                   width: canvasWidth,
                   height: canvasHeight,
                   background: canvasBgColor,
-                  color: canvasFgColor,
+                  // color: canvasFgColor,
                 }}
                 onClick={handleCanvasClick}
               >

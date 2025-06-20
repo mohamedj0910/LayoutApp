@@ -700,3 +700,8 @@ label {
   z-index: 100;
   background-color: #1d4ed8;
 }
+
+
+.export-class{
+  display: none;
+}
