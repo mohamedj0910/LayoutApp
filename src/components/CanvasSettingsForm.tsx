@@ -54,36 +54,45 @@ export const CanvasSettingsForm: React.FC<CanvasSettingsFormProps> = ({
     setOrientation(height > width ? 'portrait' : 'landscape')
     onSubmit(width, height);
   };
-  
+
   const handleWidthChange = (value: string) => {
     setSelectedSize('Custom');
     onWidthChange(value);
-    onSubmit(parseInt(newCanvasWidth), parseInt(newCanvasHeight))
-    setOrientation(newCanvasHeight > newCanvasWidth ? 'portrait' : 'landscape')
+    const width = parseInt(value);
+    const height = parseInt(newCanvasHeight);
+    if (!isNaN(width) && !isNaN(height)) {
+      onSubmit(width, height);
+      setOrientation(height > width ? 'portrait' : 'landscape');
+    }
   };
-  
+
   const handleHeightChange = (value: string) => {
     setSelectedSize('Custom');
     onHeightChange(value);
-    onSubmit(parseInt(newCanvasWidth), parseInt(newCanvasHeight))
-    setOrientation(newCanvasHeight > newCanvasWidth ? 'portrait' : 'landscape')
+    const width = parseInt(newCanvasWidth);
+    const height = parseInt(value);
+    if (!isNaN(width) && !isNaN(height)) {
+      onSubmit(width, height);
+      setOrientation(height > width ? 'portrait' : 'landscape');
+    }
   };
 
 
+
   const handleOrientationClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-  const target = e.currentTarget;
-  const selectedOrientation = target.getAttribute('data-orientation') as 'portrait' | 'landscape';
+    const target = e.currentTarget;
+    const selectedOrientation = target.getAttribute('data-orientation') as 'portrait' | 'landscape';
 
-  if (!selectedOrientation || selectedOrientation === orientation) return;
+    if (!selectedOrientation || selectedOrientation === orientation) return;
 
-  setOrientation(selectedOrientation);
+    setOrientation(selectedOrientation);
 
-  const width = parseInt(newCanvasWidth);
-  const height = parseInt(newCanvasHeight);
-  onWidthChange(height.toString());
-  onHeightChange(width.toString());
-  onSubmit(height, width);
-};
+    const width = parseInt(newCanvasWidth);
+    const height = parseInt(newCanvasHeight);
+    onWidthChange(height.toString());
+    onHeightChange(width.toString());
+    onSubmit(height, width);
+  };
 
   if (!isEditing) return null;
 

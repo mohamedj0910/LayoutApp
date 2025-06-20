@@ -27,7 +27,7 @@ label {
   bottom: 0;
   height: 4%;
   width: 4%;
-  z-index: 9999;
+  /* z-index: 9999; */
   background-color: transparent;
   cursor: se-resize;
 }
@@ -645,7 +645,7 @@ label {
   height: 8px;
   position: absolute;
   transform: translate(-50%, -50%);
-  z-index: 1000;
+  z-index: 1;
   width: 8px;
   background-color: #ffffff;
   border-radius: 50%;
@@ -657,7 +657,7 @@ label {
   height: 8px;
   position: absolute;
   transform: translate(-50%, -50%);
-  z-index: 1000;
+  z-index: 1;
   width: 8px;
   background-color: #ffffff;
   border-radius: 50%;
@@ -667,7 +667,7 @@ label {
 .bottom::before {
   content: "";
   position: absolute;
-  z-index: 1000;
+  z-index: 1;
   width: 8px;
   height: 8px;
   bottom: 0;
@@ -687,7 +687,7 @@ label {
   border-radius: 50%;
   border: 1px solid #1d4ed8;
   bottom: 0;
-  z-index: 1000;
+  z-index: 1;
   transform: translate(-50%, 50%);
 }
 

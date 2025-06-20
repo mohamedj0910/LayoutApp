@@ -122,7 +122,7 @@ export default function DrawingCanvas() {
       }
     };
     const escPressed = (e: KeyboardEvent) => {
-      if (e.key == 'Escape' || e.key=='Enter' || e.key=='Return') {
+      if (e.key == 'Escape' || e.key == 'Enter' || e.key == 'Return') {
         if (isEditingCanvas) {
           setIsEditingCanvas(false)
         }
@@ -152,7 +152,12 @@ export default function DrawingCanvas() {
     },
     [saveState]
   );
- 
+
+  useEffect(() => {
+    setNewCanvasWidth(canvasWidth.toString());
+    setNewCanvasHeight(canvasHeight.toString());
+  }, [canvasWidth, canvasHeight]);
+
   console.log(transformRef.current)
 
   const handleRemovePanel = useCallback(
@@ -319,11 +324,9 @@ export default function DrawingCanvas() {
 
   const handleCanvasSubmit = useCallback(
     (width: number, height: number) => {
-      if (!isNaN(width) && !isNaN(height) && width >= 200 && height >= 200) {
-        saveState();
-        setCanvasWidth(width);
-        setCanvasHeight(height);
-      }
+      saveState();
+      setCanvasWidth(width);
+      setCanvasHeight(height);
     },
     [saveState]
   );
@@ -404,7 +407,7 @@ export default function DrawingCanvas() {
 
   return (
     <div
-      className={`flex gap-[80px] ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}
+      className={`h-[100dvh] flex gap-[80px] ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-50'}`}
     >
       <Toolbar
         onAddRectangle={() => handleAddShape('rectangle')}
@@ -435,7 +438,7 @@ export default function DrawingCanvas() {
         onMouseEnter={() => setMouseOnCanvas(true)}
         onMouseLeave={() => setMouseOnCanvas(false)}
       >
-        <div className="flex justify-center items-center">
+        <div className="h-[100dvh] flex justify-center items-center">
           <TransformWrapper
             initialScale={0.8}
             minScale={0.4}
