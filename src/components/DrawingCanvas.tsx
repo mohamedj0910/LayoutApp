@@ -122,7 +122,7 @@ export default function DrawingCanvas() {
       }
     };
     const escPressed = (e: KeyboardEvent) => {
-      if (e.key == 'Escape') {
+      if (e.key == 'Escape' || e.key=='Enter' || e.key=='Return') {
         if (isEditingCanvas) {
           setIsEditingCanvas(false)
         }
@@ -324,7 +324,6 @@ export default function DrawingCanvas() {
         setCanvasWidth(width);
         setCanvasHeight(height);
       }
-      setIsEditingCanvas(false);
     },
     [saveState]
   );
@@ -441,7 +440,7 @@ export default function DrawingCanvas() {
             initialScale={0.8}
             minScale={0.4}
             maxScale={4}
-            limitToBounds={true}
+            // limitToBounds={true}
             centerZoomedOut={true}
             wheel={{ step: 0.1 }}
             pinch={{ step: 0.1 }}
@@ -455,7 +454,7 @@ export default function DrawingCanvas() {
                   width: canvasWidth,
                   height: canvasHeight,
                   background: canvasBgColor,
-                  color: canvasFgColor,
+                  // color: canvasFgColor,
                 }}
                 onClick={handleCanvasClick}
               >

@@ -230,6 +230,7 @@ export const Panel: React.FC<PanelProps> = ({
       position={{ x, y }}
       onStart={handleDragStart}
       onStop={handleDragStop}
+      bounds="parent"
       grid={showGrid ? [50, 50] : [1, 1]}
       disabled={isResizing || isEditingText || panelStyles.locked}
     >
