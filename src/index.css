@@ -13,6 +13,12 @@
   cursor: url('/cursor.svg'), auto;
 } */
 
+input:disabled,button:disabled{
+  cursor: none !important;
+  pointer-events: none !important;
+  opacity: 0.5;
+}
+
 button,
 label {
   cursor: unset;

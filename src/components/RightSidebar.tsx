@@ -135,7 +135,11 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
     onZIndexChange(panel.id, action);
   };
 
+
+
+
   return (
+
     <div
       className={`fixed right-0 top-0 h-screen w-80 ${themeStyles.background} p-4 shadow-2xl border-l ${themeStyles.border} z-50 transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
     >
@@ -152,6 +156,8 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           <X size={18} className={themeStyles.text} />
         </button>
       </div>
+
+
 
       <div className={`space-y-3 overflow-y-auto h-[calc(100vh-100px)] pr-2 ${themeStyles.text}`}>
         {/* Panel Styles Section */}
@@ -185,6 +191,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                 <div className="flex gap-2">
                   <input
                     type="color"
+                    disabled={panel.panelStyles?.locked}
                     value={panel.panelStyles?.backgroundColor || '#FFFFFF'}
                     onChange={(e) => handlePanelStyleChange('backgroundColor', e.target.value)}
                     className={`w-10 h-9 rounded cursor-pointer border ${themeStyles.inputBorder}`}
@@ -192,12 +199,14 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   />
                   <input
                     type="text"
+                    disabled={panel.panelStyles?.locked}
                     value={panel.panelStyles?.backgroundColor || '#FFFFFF'}
                     onChange={(e) => handlePanelStyleChange('backgroundColor', e.target.value)}
                     className={`flex-1 h-9 text-sm rounded px-2 ${themeStyles.inputBackground} ${themeStyles.text} border ${themeStyles.inputBorder}`}
                     aria-label="Panel Background Color Text"
                   />
                   <button
+                    disabled={panel.panelStyles?.locked}
                     onClick={() => handlePanelStyleChange('backgroundColor', null)}
                     className={`px-2.5 rounded ${themeStyles.buttonSecondary} ${themeStyles.buttonSecondaryText} transition-colors`}
                     aria-label="Clear Background Color"
@@ -216,12 +225,14 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   <div className="flex gap-2">
                     <input
                       type="color"
+                      disabled={panel.panelStyles?.locked}
                       value={panel.panelStyles?.borderColor || '#D1D5DB'}
                       onChange={(e) => handlePanelStyleChange('borderColor', e.target.value)}
                       className={`w-10 h-9 rounded cursor-pointer border ${themeStyles.inputBorder}`}
                       aria-label="Panel Border Color"
                     />
                     <button
+                      disabled={panel.panelStyles?.locked}
                       onClick={() => handlePanelStyleChange('borderColor', null)}
                       className={`px-2.5 rounded ${themeStyles.buttonSecondary} ${themeStyles.buttonSecondaryText} transition-colors`}
                       aria-label="Clear Border Color"
@@ -236,6 +247,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   </label>
                   <select
                     value={panel.panelStyles?.borderStyle || 'solid'}
+                    disabled={panel.panelStyles?.locked}
                     onChange={(e) =>
                       handlePanelStyleChange('borderStyle', e.target.value as 'solid' | 'dashed' | 'dotted')
                     }
@@ -256,6 +268,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                 </label>
                 <input
                   type="range"
+                  disabled={panel.panelStyles?.locked}
                   min="0"
                   max="10"
                   step="0.5"
@@ -273,6 +286,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                 </label>
                 <input
                   type="range"
+                  disabled={panel.panelStyles?.locked}
                   min="0"
                   max="360"
                   step="1"
@@ -290,6 +304,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                 </label>
                 <input
                   type="range"
+                  disabled={panel.panelStyles?.locked}
                   min="0"
                   max="1"
                   step="0.01"
@@ -303,6 +318,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
               {/* Lock Toggle */}
               <div className="flex items-center justify-between pt-2">
                 <label
+
                   onClick={() => handlePanelStyleChange('locked', !panel.panelStyles?.locked)}
                   className={`flex items-center gap-2 text-sm ${themeStyles.text}`}>
                   {panel.panelStyles?.locked ? <Lock className='text-blue-400' size={15} /> : <Unlock size={15} />} <span>Lock Panel</span>
@@ -356,6 +372,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   </label>
                   <input
                     type="number"
+                    disabled={panel.panelStyles?.locked}
                     min={panel.shapeType === 'text' ? 100 : 100}
                     max="2000"
                     step="1"
@@ -369,8 +386,9 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                 </div>
                 <div className="flex items-center justify-center h-full">
                   <button
+                    disabled={panel.panelStyles?.locked}
                     onClick={() => setIsAspectRatioLocked(!isAspectRatioLocked)}
-                    className={`p-1 rounded ${themeStyles.buttonSecondary} ${themeStyles.buttonSecondaryText} transition-colors`}
+                    className={`p-1 mt-5 rounded ${themeStyles.buttonSecondary} ${themeStyles.buttonSecondaryText} transition-colors`}
                     aria-label={isAspectRatioLocked ? 'Unlock Aspect Ratio' : 'Lock Aspect Ratio'}
                   >
                     {isAspectRatioLocked ? <Unlink size={16} className={themeStyles.icon} /> : <Link size={16} className={themeStyles.icon} />}
@@ -382,6 +400,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   </label>
                   <input
                     type="number"
+                    disabled={panel.panelStyles?.locked}
                     min={panel.shapeType === 'text' ? 50 : 100}
                     max="2000"
                     step="1"
@@ -401,6 +420,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   </label>
                   <input
                     type="number"
+                    disabled={panel.panelStyles?.locked}
                     min="0"
                     max="2000"
                     step="1"
@@ -416,6 +436,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   </label>
                   <input
                     type="number"
+                    disabled={panel.panelStyles?.locked}
                     min="0"
                     max="2000"
                     step="1"
@@ -470,6 +491,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                 <div className="flex gap-2">
                   <input
                     type="color"
+                    disabled={panel.panelStyles?.locked}
                     value={panel.titleStyle?.textColor || '#000000'}
                     onChange={(e) => handleTitleStyleChange('textColor', e.target.value)}
                     className={`w-10 h-9 rounded cursor-pointer border ${themeStyles.inputBorder}`}
@@ -477,6 +499,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   />
                   <input
                     type="text"
+                    disabled={panel.panelStyles?.locked}
                     value={panel.titleStyle?.textColor || '#000000'}
                     onChange={(e) => handleTitleStyleChange('textColor', e.target.value)}
                     className={`flex-1 h-9 text-sm rounded px-2 ${themeStyles.inputBackground} ${themeStyles.text} border ${themeStyles.inputBorder}`}
@@ -494,6 +517,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   <div className="flex items-center gap-2">
                     <input
                       type="number"
+                      disabled={panel.panelStyles?.locked}
                       min="8"
                       max="72"
                       step="1"
@@ -511,6 +535,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   </label>
                   <select
                     value={panel.titleStyle?.fontStyle || 'normal'}
+                    disabled={panel.panelStyles?.locked}
                     onChange={(e) =>
                       handleTitleStyleChange('fontStyle', e.target.value as 'normal' | 'bold' | 'italic')
                     }
@@ -532,6 +557,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   </label>
                   <select
                     value={panel.titleStyle?.textAlign || 'center'}
+                    disabled={panel.panelStyles?.locked}
                     onChange={(e) =>
                       handleTitleStyleChange('textAlign', e.target.value as 'left' | 'center' | 'right')
                     }
@@ -549,6 +575,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   </label>
                   <select
                     value={panel.titleStyle?.textTransform || 'none'}
+                    disabled={panel.panelStyles?.locked}
                     onChange={(e) =>
                       handleTitleStyleChange(
                         'textTransform',
@@ -575,6 +602,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                 </label>
                 <input
                   type="range"
+                  disabled={panel.panelStyles?.locked}
                   min="0"
                   max="1"
                   step="0.01"
@@ -612,6 +640,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
           >
             <div className="grid grid-cols-2 gap-2 pt-2">
               <button
+                disabled={panel.panelStyles?.locked}
                 onClick={() => handleZIndexAction('back')}
                 className={`flex flex-col items-center justify-center p-2 rounded-md text-sm ${themeStyles.layerButton} ${themeStyles.text} transition-colors`}
                 aria-label="Send Backward"
@@ -620,6 +649,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                 <span>Backward</span>
               </button>
               <button
+                disabled={panel.panelStyles?.locked}
                 onClick={() => handleZIndexAction('forward')}
                 className={`flex flex-col items-center justify-center p-2 rounded-md text-sm ${themeStyles.layerButton} ${themeStyles.text} transition-colors`}
                 aria-label="Send Forward"
@@ -628,6 +658,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                 <span>Forward</span>
               </button>
               <button
+                disabled={panel.panelStyles?.locked}
                 onClick={() => handleZIndexAction('toBack')}
                 className={`flex flex-col items-center justify-center p-2 rounded-md text-sm ${themeStyles.layerButton} ${themeStyles.text} transition-colors`}
                 aria-label="Bring to Back"
@@ -636,6 +667,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                 <span>To Back</span>
               </button>
               <button
+                disabled={panel.panelStyles?.locked}
                 onClick={() => handleZIndexAction('toFront')}
                 className={`flex flex-col items-center justify-center p-2 rounded-md text-sm ${themeStyles.layerButton} ${themeStyles.text} transition-colors`}
                 aria-label="Bring to Front"
