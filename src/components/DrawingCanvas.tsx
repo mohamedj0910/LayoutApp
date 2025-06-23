@@ -34,6 +34,7 @@ export default function DrawingCanvas() {
   const [sidebarPanelId, setSidebarPanelId] = useState<string | null>(null);
   const [mouseOnCanvas, setMouseOnCanvas] = useState(false);
   const transformRef = useRef<any>(null);
+  const canvasRef = useRef<any>(null);
 
   const saveState = useCallback(() => {
     const state: HistoryState = {
@@ -100,7 +101,6 @@ export default function DrawingCanvas() {
         } else if (e.key === 'v' && copiedPanel) {
           saveState();
           const scale = 1;
-          console.log('scale : ', transformRef.current?.instance?.state?.scale)
           setPanels((prev) => pastePanel(prev, copiedPanel, { scale }));
         } else if (e.key === 'z') {
           undo();
@@ -119,6 +119,74 @@ export default function DrawingCanvas() {
           e.preventDefault()
           transformRef.current?.setTransform(0, 0, 0.8, 1000)
         }
+      }
+      else if (e.key == 'ArrowUp') {
+        
+        setPanels((prev) =>
+          prev.map((panel) => {
+            e.preventDefault()
+            if (panel.y <= 0 || panel.panelStyles?.locked) {
+              return panel
+            }
+            return panel.id === selectedPanel
+              ? { ...panel, y: panel.y - 1 }
+              : panel
+          }
+          )
+        );
+      }
+      else if (e.key === 'ArrowDown') {
+        
+        setPanels((prev) =>
+          prev.map((panel) => {
+            if (panel.id !== selectedPanel) return panel;
+            e.preventDefault();
+
+            const maxY = canvasHeight - panel.height - 3;
+            if (panel.y == maxY || panel.panelStyles?.locked) {
+              return panel
+            }
+            console.log(maxY)
+            const newY = Math.min(panel.y + 1, maxY);
+            console.log(newY)
+
+            return { ...panel, y: newY };
+          })
+        );
+      }
+      else if (e.key === 'ArrowRight') {
+        
+        setPanels((prev) =>
+          prev.map((panel) => {
+            if (panel.id !== selectedPanel) return panel;
+            e.preventDefault();
+
+            const maxX = canvasWidth - panel.width - 3;
+            if (panel.x == maxX || panel.panelStyles?.locked) {
+              return panel
+            }
+            console.log(maxX)
+            const newX = Math.min(panel.x + 1, maxX);
+            console.log(newX)
+
+            return { ...panel, x: newX };
+          })
+        );
+      }
+      else if (e.key === 'ArrowLeft') {
+        
+        setPanels((prev) =>
+          prev.map((panel) => {
+            if (panel.id !== selectedPanel) return panel;
+            if (panel.x <= 0 || panel.panelStyles?.locked) {
+              return panel
+            }
+            return panel.id === selectedPanel
+              ? { ...panel, x: panel.x - 1 }
+              : panel
+          }
+          )
+        );
       }
     };
     const escPressed = (e: KeyboardEvent) => {
@@ -158,10 +226,10 @@ export default function DrawingCanvas() {
     setNewCanvasHeight(canvasHeight.toString());
   }, [canvasWidth, canvasHeight]);
 
-  console.log(transformRef.current)
 
   const handleRemovePanel = useCallback(
     (id: string) => {
+
       saveState();
       setPanels((prev) => prev.filter((panel) => panel.id !== id));
       setSelectedPanel(null);
@@ -452,6 +520,7 @@ export default function DrawingCanvas() {
           >
             <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>
               <div
+                ref={canvasRef}
                 className={`canvas-container relative border-2 border-black transition-colors duration-200 overflow-hidden ${roundedCorners ? 'rounded-xl' : ''}`}
                 style={{
                   width: canvasWidth,

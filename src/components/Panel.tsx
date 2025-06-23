@@ -59,6 +59,9 @@ export const Panel: React.FC<PanelProps> = ({
         isShiftPressed.current = true;
       }
       if (e.key === 'Delete') {
+        if (panelStyles.locked) {
+          return
+        }
         onRemove(id)
       }
     };
@@ -442,6 +445,9 @@ export const Panel: React.FC<PanelProps> = ({
           <div className="panel-controls">
             <button
               onClick={(e) => {
+                if (panelStyles.locked) {
+                  return;
+                }
                 e.stopPropagation();
                 onRemove(id);
               }}
