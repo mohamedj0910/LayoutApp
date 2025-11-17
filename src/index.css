@@ -13,7 +13,8 @@
   cursor: url('/cursor.svg'), auto;
 } */
 
-input:disabled,button:disabled{
+input:disabled,
+button:disabled {
   cursor: none !important;
   pointer-events: none !important;
   opacity: 0.5;
@@ -47,60 +48,9 @@ label {
   width: 4%;
 }
 
-.react-resizable-handle-n,
-.react-resizable-handle-s {
-  cursor: ns-resize;
-  width: 96%;
-  transform: rotate(0deg);
-  height: 4%;
-}
-
-.react-resizable-handle-w {
-  left: 0;
-}
-
-.react-resizable-handle-e {
-  right: 0;
-}
-
-.react-resizable-handle-n {
-  top: 0;
-  left: 4%;
-}
-
-.react-resizable-handle-s {
-  bottom: 0;
-  left: 4%;
-}
-
-.react-resizable-handle-se {
-  bottom: 0;
-  right: 0;
-  cursor: se-resize;
-}
-
-.react-resizable-handle-ne {
-  top: 0;
-  right: 0;
-  cursor: ne-resize;
-}
-
-.react-resizable-handle-nw {
-  top: 0;
-  left: 0;
-  cursor: nw-resize;
-}
-
-.react-resizable-handle-sw {
-  bottom: 0;
-  left: 0;
-  cursor: sw-resize;
-}
-
 .grid-background {
   /* background-color: transparent; */
-  background-image:
-    radial-gradient(circle at 3% 3%, black 1px, transparent 1px),
+  background-image: radial-gradient(circle at 3% 3%, black 1px, transparent 1px),
     radial-gradient(circle at 3% 20%, black 1px, transparent 1px),
     radial-gradient(circle at 3% 40%, black 1px, transparent 1px),
     radial-gradient(circle at 3% 60%, black 1px, transparent 1px),
@@ -117,7 +67,6 @@ label {
   border: 2px dashed #3b82f6;
   background: rgba(59, 130, 246, 0.1);
 }
-
 
 /* Add these to your existing index.css */
 /* .react-resizable {
@@ -240,35 +189,35 @@ label {
 } */
 
 /* Handle positions with rotation adjustments */
-.react-resizable-rotated>.react-resizable-handle-se {
+.react-resizable-rotated > .react-resizable-handle-se {
   bottom: 0;
   right: 0;
   cursor: se-resize;
   --rotation: -45deg;
 }
 
-.react-resizable-rotated>.react-resizable-handle-sw {
+.react-resizable-rotated > .react-resizable-handle-sw {
   bottom: 0;
   left: 0;
   cursor: sw-resize;
   --rotation: 45deg;
 }
 
-.react-resizable-rotated>.react-resizable-handle-nw {
+.react-resizable-rotated > .react-resizable-handle-nw {
   top: 0;
   left: 0;
   cursor: nw-resize;
   --rotation: -135deg;
 }
 
-.react-resizable-rotated>.react-resizable-handle-ne {
+.react-resizable-rotated > .react-resizable-handle-ne {
   top: 0;
   right: 0;
   cursor: ne-resize;
   --rotation: 135deg;
 }
 
-.react-resizable-rotated>.react-resizable-handle-w {
+.react-resizable-rotated > .react-resizable-handle-w {
   left: 0;
   top: 50%;
   margin-top: -10px;
@@ -276,7 +225,7 @@ label {
   --rotation: 90deg;
 }
 
-.react-resizable-rotated>.react-resizable-handle-e {
+.react-resizable-rotated > .react-resizable-handle-e {
   right: 0;
   top: 50%;
   margin-top: -10px;
@@ -284,7 +233,7 @@ label {
   --rotation: -90deg;
 }
 
-.react-resizable-rotated>.react-resizable-handle-n {
+.react-resizable-rotated > .react-resizable-handle-n {
   top: 0;
   left: 50%;
   margin-left: -10px;
@@ -292,7 +241,7 @@ label {
   --rotation: 180deg;
 }
 
-.react-resizable-rotated>.react-resizable-handle-s {
+.react-resizable-rotated > .react-resizable-handle-s {
   bottom: 0;
   /* left: 50%; */
   margin-left: -10px;
@@ -404,30 +353,6 @@ label {
   border-bottom: 2px solid rgba(0, 0, 0, 0.4);
 } */
 
-.react-resizable-handle-se {
-  bottom: 0;
-  right: 0;
-  cursor: se-resize;
-}
-
-.react-resizable-handle-sw {
-  bottom: 0;
-  left: 0;
-  cursor: sw-resize;
-}
-
-.react-resizable-handle-nw {
-  top: 0;
-  left: 0;
-  cursor: nw-resize;
-}
-
-.react-resizable-handle-ne {
-  top: 0;
-  right: 0;
-  cursor: ne-resize;
-}
-
 .react-resizable-handle-w {
   left: 0;
   top: 50%;
@@ -538,27 +463,31 @@ label {
 }
 
 .react-resizable-handle-se {
-  bottom: 0;
-  right: 0;
+  bottom: -6px;
+  right: -6px;
   cursor: se-resize;
+  z-index: 1002;
 }
 
 .react-resizable-handle-ne {
-  top: 0;
-  right: 0;
+  top: -6px;
+  right: -6px;
   cursor: ne-resize;
+  z-index: 1002;
 }
 
 .react-resizable-handle-nw {
-  top: 0;
-  left: 0;
+  top: -6px;
+  left: -6px;
   cursor: nw-resize;
+  z-index: 1002;
 }
 
 .react-resizable-handle-sw {
-  bottom: 0;
-  left: 0;
+  bottom: -6px;
+  left: -6px;
   cursor: sw-resize;
+  z-index: 1002;
 }
 
 .top,
@@ -568,7 +497,6 @@ label {
   position: absolute;
   background-color: #3b82f6;
   display: none;
-
 }
 
 .top {
@@ -707,7 +635,6 @@ label {
   background-color: #1d4ed8;
 }
 
-
-.export-class{
+.export-class {
   display: none;
 }
